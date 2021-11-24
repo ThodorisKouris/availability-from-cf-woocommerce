@@ -1,0 +1,39 @@
+//availability
+
+add_filter( 'woocommerce_get_availability', 'wcs_custom_get_availability', 1, 2);
+
+function wcs_custom_get_availability( $availability, $_product ) {
+    
+    // παίρνει την τιμή από το field του plugin του skroutz
+    $getavailability = get_field('we_skroutzxml_custom_availability');
+    if (empty($getavailability)) {
+    $getavailability = 'Παράδοση σε 1 - 3 ημέρες';
+    
+   
+        
+    }
+    // εάν είναι επιλεγμένο απόκρύψη να γίνει κατόπιν παραγγελίας
+    elseif ($getavailability == 'Απόκρυψη από το XML'){
+    $getavailability = 'Κατόπιν Παραγγελίας';
+    }
+   
+    
+    // εάν είναι διαθέσιμο παίρνεις την τιμή του skroutz field
+    if ( $_product->is_in_stock() ) { 
+        $availability['availability'] = __("{$getavailability}" , 'woocommerce')
+        ;
+        
+    }
+    
+
+    // εάν δεν είναι διαθέσιμο τότε εμφανίζει το μήνυμα μη διαθέσιμο
+    if ( ! $_product->is_in_stock() ) {
+        $availability['availability'] = __('Μη διαθέσιμο', 'woocommerce');
+    }
+    
+    
+    
+    return $availability;
+
+    }
+ 
